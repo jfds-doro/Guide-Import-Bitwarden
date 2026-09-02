@@ -3,117 +3,141 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Importer ses mots de passe dans Bitwarden — Guide</title>
-<meta name="description" content="Guide simple et clair pour importer vos mots de passe dans Bitwarden : les différentes méthodes et les formats de fichiers acceptés.">
+<title>Importer ses mots de passe dans Bitwarden — DORO</title>
+<meta name="description" content="Guide DORO : comment importer vos mots de passe dans Bitwarden — les différentes méthodes et les formats de fichiers acceptés.">
+<link rel="icon" type="image/svg+xml" href="assets/monogramme.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#f5f6f8;
+    /* Charte graphique DORO */
+    --sage:#94A6A1;          /* vert sauge signature */
+    --sage-dark:#606967;
+    --sage-mid:#7F8C89;
+    --ink:#1D1E1C;           /* noir DORO */
+    --white:#FFFFFF;
+    --bg:#f4f5f4;
     --card:#ffffff;
-    --ink:#1d2733;
-    --muted:#5b6675;
-    --line:#e3e7ec;
-    --brand:#175ddc;
-    --brand-dark:#134bb0;
-    --accent-bg:#eaf1fd;
-    --warn-bg:#fff6e6;
-    --warn-line:#f0c060;
-    --note-bg:#eef1f4;
-    --radius:12px;
+    --muted:#5b6360;
+    --line:#e4e7e5;
+    --sage-tint:#eef1f0;
+    --warn-bg:#f6f1e8;
+    --warn-line:#c9a24b;
+    --radius:10px;
     --maxw:940px;
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
     margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-family:"Montserrat","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     background:var(--bg);
     color:var(--ink);
-    line-height:1.6;
-    font-size:17px;
+    line-height:1.65;
+    font-size:16.5px;
   }
-  a{color:var(--brand);}
+  a{color:var(--sage-dark);}
+  h1,h2,h3,.brand-type{font-family:"Bebas Neue","Montserrat",sans-serif;font-weight:400;letter-spacing:.06em;}
+
+  /* HERO */
   header.hero{
-    background:linear-gradient(135deg,var(--brand),#3b78e7);
-    color:#fff;
-    padding:48px 20px 40px;
+    background:var(--ink);
+    color:var(--white);
+    padding:0 20px 46px;
     text-align:center;
+    border-bottom:3px solid var(--sage);
   }
-  header.hero .wrap{max-width:var(--maxw);margin:0 auto;}
-  header.hero h1{margin:0 0 10px;font-size:2rem;line-height:1.25;}
-  header.hero p{margin:0 auto;max-width:640px;font-size:1.08rem;opacity:.95;}
-  header.hero .logo{font-weight:700;letter-spacing:.5px;font-size:.9rem;text-transform:uppercase;opacity:.9;margin-bottom:14px;}
+  .topbar{
+    max-width:var(--maxw);margin:0 auto;padding:20px 0 30px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+  }
+  .topbar img{height:34px;}
+  .topbar .dept{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);font-weight:600;font-family:"Montserrat",sans-serif;}
+  header.hero .wrap{max-width:720px;margin:0 auto;}
+  header.hero h1{margin:14px 0 14px;font-size:2.8rem;line-height:1.05;letter-spacing:.04em;}
+  header.hero h1 .accent{color:var(--sage);}
+  header.hero p{margin:0 auto;max-width:600px;font-size:1.05rem;opacity:.88;font-weight:400;letter-spacing:0;line-height:1.6;}
+
   main{max-width:var(--maxw);margin:0 auto;padding:0 20px 80px;}
   section{
     background:var(--card);
     border:1px solid var(--line);
     border-radius:var(--radius);
-    padding:26px 28px;
-    margin-top:26px;
-    box-shadow:0 1px 3px rgba(20,40,70,.04);
+    padding:28px 30px;
+    margin-top:24px;
+    box-shadow:0 1px 3px rgba(29,30,28,.04);
   }
-  h2{font-size:1.4rem;margin:0 0 6px;display:flex;align-items:center;gap:10px;}
+  h2{font-size:1.75rem;margin:0 0 6px;display:flex;align-items:center;gap:14px;color:var(--ink);}
   h2 .num{
-    background:var(--brand);color:#fff;width:32px;height:32px;border-radius:50%;
-    display:inline-flex;align-items:center;justify-content:center;font-size:1rem;flex:0 0 auto;
+    background:var(--sage);color:var(--ink);min-width:38px;height:38px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;font-size:1.25rem;flex:0 0 auto;
+    font-family:"Bebas Neue",sans-serif;padding-top:3px;
   }
-  h3{font-size:1.12rem;margin:22px 0 8px;color:var(--ink);}
+  h3{font-size:1.2rem;margin:24px 0 8px;color:var(--sage-dark);letter-spacing:.04em;}
   .lead{color:var(--muted);margin-top:2px;}
   ol,ul{padding-left:22px;}
   ol li,ul li{margin:6px 0;}
+
+  /* SOMMAIRE */
   .toc{
-    background:var(--accent-bg);border:1px solid #cfe0fb;border-radius:var(--radius);
-    padding:18px 22px;margin-top:26px;
+    background:var(--sage-tint);border:1px solid #d9e0dd;border-radius:var(--radius);
+    padding:20px 24px;margin-top:24px;
   }
-  .toc h2{font-size:1.05rem;color:var(--brand-dark);margin-bottom:10px;}
+  .toc h2{font-size:1.3rem;color:var(--sage-dark);margin-bottom:12px;}
   .toc ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 20px;}
-  .toc a{text-decoration:none;font-weight:500;}
+  .toc a{text-decoration:none;font-weight:500;font-size:.98rem;}
   .toc a:hover{text-decoration:underline;}
 
-  /* Onglets méthodes */
-  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 20px;}
+  /* ONGLETS */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 22px;}
   .tab-btn{
     border:1px solid var(--line);background:#fff;color:var(--muted);
-    padding:9px 16px;border-radius:999px;cursor:pointer;font-size:.95rem;font-weight:600;
-    transition:all .15s;
+    padding:9px 16px;border-radius:999px;cursor:pointer;font-size:.92rem;font-weight:600;
+    font-family:"Montserrat",sans-serif;transition:all .15s;
   }
-  .tab-btn:hover{border-color:var(--brand);color:var(--brand);}
-  .tab-btn.active{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .tab-btn:hover{border-color:var(--sage);color:var(--sage-dark);}
+  .tab-btn.active{background:var(--sage);border-color:var(--sage);color:var(--ink);}
   .tab-panel{display:none;}
   .tab-panel.active{display:block;animation:fade .25s ease;}
   @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 
-  .callout{border-radius:10px;padding:12px 16px;margin:14px 0;font-size:.96rem;}
-  .callout.note{background:var(--note-bg);border-left:4px solid #9aa7b5;}
+  /* CALLOUTS */
+  .callout{border-radius:8px;padding:13px 16px;margin:14px 0;font-size:.95rem;}
+  .callout.note{background:var(--sage-tint);border-left:4px solid var(--sage-mid);}
   .callout.warn{background:var(--warn-bg);border-left:4px solid var(--warn-line);}
-  .callout.tip{background:var(--accent-bg);border-left:4px solid var(--brand);}
-  .callout strong{display:block;margin-bottom:2px;}
+  .callout.tip{background:var(--sage-tint);border-left:4px solid var(--sage);}
+  .callout strong{display:block;margin-bottom:2px;color:var(--ink);}
 
-  code{background:#eef1f4;padding:2px 6px;border-radius:5px;font-size:.9em;font-family:"SF Mono",Consolas,Menlo,monospace;}
-  pre{background:#1d2733;color:#e6edf3;padding:14px 16px;border-radius:10px;overflow-x:auto;font-size:.9rem;}
+  code{background:var(--sage-tint);padding:2px 6px;border-radius:5px;font-size:.9em;font-family:Consolas,Menlo,monospace;color:var(--sage-dark);}
+  pre{background:var(--ink);color:#eef1f0;padding:14px 16px;border-radius:8px;overflow-x:auto;font-size:.9rem;}
   pre code{background:none;color:inherit;padding:0;}
 
-  /* Formats */
-  .search-box{margin:6px 0 16px;position:relative;}
+  /* FORMATS */
+  .search-box{margin:8px 0 16px;position:relative;}
   .search-box input{
-    width:100%;padding:12px 14px 12px 40px;font-size:1rem;border:1px solid var(--line);
-    border-radius:10px;outline:none;
+    width:100%;padding:12px 14px 12px 42px;font-size:1rem;border:1px solid var(--line);
+    border-radius:8px;outline:none;font-family:"Montserrat",sans-serif;
   }
-  .search-box input:focus{border-color:var(--brand);}
-  .search-box::before{content:"🔍";position:absolute;left:14px;top:11px;font-size:1rem;opacity:.6;}
+  .search-box input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(148,166,161,.2);}
+  .search-box::before{content:"🔍";position:absolute;left:15px;top:11px;font-size:1rem;opacity:.55;}
   .formats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;}
   .fmt{
-    background:#fbfcfd;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:.93rem;
+    background:#fbfcfc;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:.92rem;
     display:flex;justify-content:space-between;align-items:center;gap:8px;
   }
-  .fmt .ext{color:var(--brand-dark);font-weight:600;font-size:.82rem;background:var(--accent-bg);padding:2px 8px;border-radius:6px;white-space:nowrap;}
+  .fmt .ext{color:var(--sage-dark);font-weight:600;font-size:.8rem;background:var(--sage-tint);padding:2px 8px;border-radius:6px;white-space:nowrap;}
   .no-result{color:var(--muted);font-style:italic;padding:10px 0;}
-  .count-badge{font-size:.85rem;color:var(--muted);font-weight:400;margin-left:auto;}
 
-  footer{text-align:center;color:var(--muted);font-size:.9rem;padding:30px 20px 50px;}
-  footer a{color:var(--muted);}
-  .updated{font-size:.82rem;color:var(--muted);margin-top:8px;}
+  /* FOOTER */
+  footer{background:var(--ink);color:#c4ccc9;text-align:center;padding:36px 20px 42px;margin-top:10px;}
+  footer img{height:30px;margin-bottom:14px;opacity:.95;}
+  footer a{color:var(--sage);}
+  footer p{margin:6px 0;font-size:.9rem;}
+  .updated{font-size:.8rem;color:#8b938f;margin-top:12px;}
   @media(max-width:600px){
-    header.hero h1{font-size:1.6rem;}
+    header.hero h1{font-size:2.1rem;}
+    h2{font-size:1.45rem;}
     body{font-size:16px;}
     section{padding:22px 18px;}
   }
@@ -122,9 +146,12 @@
 <body>
 
 <header class="hero">
+  <div class="topbar">
+    <img src="assets/logo-doro-blanc.svg" alt="DORO — Packaging de luxe">
+    <span class="dept">Support Informatique</span>
+  </div>
   <div class="wrap">
-    <div class="logo">Bitwarden • Guide interne</div>
-    <h1>Importer vos mots de passe dans Bitwarden</h1>
+    <h1>Importer vos mots de passe dans <span class="accent">Bitwarden</span></h1>
     <p>Ce guide vous explique, étape par étape, comment transférer vos mots de passe vers Bitwarden — quelle que soit la méthode utilisée — et quels formats de fichiers sont acceptés.</p>
   </div>
 </header>
@@ -336,9 +363,10 @@
 </main>
 
 <footer>
-  <p>Guide interne rédigé à partir de la documentation officielle Bitwarden.<br>
-  Source : <a href="https://bitwarden.com/help/import-data/" target="_blank" rel="noopener">bitwarden.com/help/import-data</a> &amp; <a href="https://bitwarden.com/help/import-faqs/" target="_blank" rel="noopener">import-faqs</a>.</p>
-  <p class="updated">Document d'aide — n'hésitez pas à contacter le support informatique en cas de difficulté.</p>
+  <img src="assets/logo-doro-blanc.svg" alt="DORO — Packaging de luxe">
+  <p>Guide interne rédigé par le Support Informatique DORO, à partir de la documentation officielle Bitwarden.</p>
+  <p>Sources : <a href="https://bitwarden.com/help/import-data/" target="_blank" rel="noopener">bitwarden.com/help/import-data</a> &amp; <a href="https://bitwarden.com/help/import-faqs/" target="_blank" rel="noopener">import-faqs</a>.</p>
+  <p class="updated">En cas de difficulté, contactez le Support Informatique.</p>
 </footer>
 
 <script>
