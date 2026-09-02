@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Importer ses mots de passe dans Bitwarden — Guide</title>
+<meta name="description" content="Guide simple et clair pour importer vos mots de passe dans Bitwarden : les différentes méthodes et les formats de fichiers acceptés.">
+<style>
+  :root{
+    --bg:#f5f6f8;
+    --card:#ffffff;
+    --ink:#1d2733;
+    --muted:#5b6675;
+    --line:#e3e7ec;
+    --brand:#175ddc;
+    --brand-dark:#134bb0;
+    --accent-bg:#eaf1fd;
+    --warn-bg:#fff6e6;
+    --warn-line:#f0c060;
+    --note-bg:#eef1f4;
+    --radius:12px;
+    --maxw:940px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.6;
+    font-size:17px;
+  }
+  a{color:var(--brand);}
+  header.hero{
+    background:linear-gradient(135deg,var(--brand),#3b78e7);
+    color:#fff;
+    padding:48px 20px 40px;
+    text-align:center;
+  }
+  header.hero .wrap{max-width:var(--maxw);margin:0 auto;}
+  header.hero h1{margin:0 0 10px;font-size:2rem;line-height:1.25;}
+  header.hero p{margin:0 auto;max-width:640px;font-size:1.08rem;opacity:.95;}
+  header.hero .logo{font-weight:700;letter-spacing:.5px;font-size:.9rem;text-transform:uppercase;opacity:.9;margin-bottom:14px;}
+  main{max-width:var(--maxw);margin:0 auto;padding:0 20px 80px;}
+  section{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 28px;
+    margin-top:26px;
+    box-shadow:0 1px 3px rgba(20,40,70,.04);
+  }
+  h2{font-size:1.4rem;margin:0 0 6px;display:flex;align-items:center;gap:10px;}
+  h2 .num{
+    background:var(--brand);color:#fff;width:32px;height:32px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;font-size:1rem;flex:0 0 auto;
+  }
+  h3{font-size:1.12rem;margin:22px 0 8px;color:var(--ink);}
+  .lead{color:var(--muted);margin-top:2px;}
+  ol,ul{padding-left:22px;}
+  ol li,ul li{margin:6px 0;}
+  .toc{
+    background:var(--accent-bg);border:1px solid #cfe0fb;border-radius:var(--radius);
+    padding:18px 22px;margin-top:26px;
+  }
+  .toc h2{font-size:1.05rem;color:var(--brand-dark);margin-bottom:10px;}
+  .toc ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 20px;}
+  .toc a{text-decoration:none;font-weight:500;}
+  .toc a:hover{text-decoration:underline;}
+
+  /* Onglets méthodes */
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 20px;}
+  .tab-btn{
+    border:1px solid var(--line);background:#fff;color:var(--muted);
+    padding:9px 16px;border-radius:999px;cursor:pointer;font-size:.95rem;font-weight:600;
+    transition:all .15s;
+  }
+  .tab-btn:hover{border-color:var(--brand);color:var(--brand);}
+  .tab-btn.active{background:var(--brand);border-color:var(--brand);color:#fff;}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+  .callout{border-radius:10px;padding:12px 16px;margin:14px 0;font-size:.96rem;}
+  .callout.note{background:var(--note-bg);border-left:4px solid #9aa7b5;}
+  .callout.warn{background:var(--warn-bg);border-left:4px solid var(--warn-line);}
+  .callout.tip{background:var(--accent-bg);border-left:4px solid var(--brand);}
+  .callout strong{display:block;margin-bottom:2px;}
+
+  code{background:#eef1f4;padding:2px 6px;border-radius:5px;font-size:.9em;font-family:"SF Mono",Consolas,Menlo,monospace;}
+  pre{background:#1d2733;color:#e6edf3;padding:14px 16px;border-radius:10px;overflow-x:auto;font-size:.9rem;}
+  pre code{background:none;color:inherit;padding:0;}
+
+  /* Formats */
+  .search-box{margin:6px 0 16px;position:relative;}
+  .search-box input{
+    width:100%;padding:12px 14px 12px 40px;font-size:1rem;border:1px solid var(--line);
+    border-radius:10px;outline:none;
+  }
+  .search-box input:focus{border-color:var(--brand);}
+  .search-box::before{content:"🔍";position:absolute;left:14px;top:11px;font-size:1rem;opacity:.6;}
+  .formats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;}
+  .fmt{
+    background:#fbfcfd;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:.93rem;
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+  }
+  .fmt .ext{color:var(--brand-dark);font-weight:600;font-size:.82rem;background:var(--accent-bg);padding:2px 8px;border-radius:6px;white-space:nowrap;}
+  .no-result{color:var(--muted);font-style:italic;padding:10px 0;}
+  .count-badge{font-size:.85rem;color:var(--muted);font-weight:400;margin-left:auto;}
+
+  footer{text-align:center;color:var(--muted);font-size:.9rem;padding:30px 20px 50px;}
+  footer a{color:var(--muted);}
+  .updated{font-size:.82rem;color:var(--muted);margin-top:8px;}
+  @media(max-width:600px){
+    header.hero h1{font-size:1.6rem;}
+    body{font-size:16px;}
+    section{padding:22px 18px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="logo">Bitwarden • Guide interne</div>
+    <h1>Importer vos mots de passe dans Bitwarden</h1>
+    <p>Ce guide vous explique, étape par étape, comment transférer vos mots de passe vers Bitwarden — quelle que soit la méthode utilisée — et quels formats de fichiers sont acceptés.</p>
+  </div>
+</header>
+
+<main>
+
+  <nav class="toc" aria-label="Sommaire">
+    <h2>Sommaire</h2>
+    <ul>
+      <li><a href="#avant">1. Avant de commencer</a></li>
+      <li><a href="#methodes">2. Les méthodes d'import</a></li>
+      <li><a href="#formats">3. Formats de fichiers acceptés</a></li>
+      <li><a href="#erreurs">4. En cas d'erreur</a></li>
+      <li><a href="#apres">5. Après l'import (sécurité)</a></li>
+    </ul>
+  </nav>
+
+  <!-- 1. AVANT -->
+  <section id="avant">
+    <h2><span class="num">1</span> Avant de commencer</h2>
+    <p class="lead">L'import permet de transférer d'un coup tous vos identifiants depuis un autre gestionnaire de mots de passe (ou depuis votre navigateur) vers Bitwarden, sans les ressaisir un par un.</p>
+    <p>Le principe est toujours le même :</p>
+    <ol>
+      <li>Vous <strong>exportez</strong> vos données depuis votre ancien outil (navigateur, autre gestionnaire…) sous forme de fichier.</li>
+      <li>Vous <strong>importez</strong> ce fichier dans Bitwarden.</li>
+      <li>Vous <strong>supprimez</strong> le fichier d'export une fois l'opération terminée.</li>
+    </ol>
+    <div class="callout tip">
+      <strong>Bon à savoir</strong>
+      Vos données sont chiffrées sur votre appareil <em>avant</em> d'être envoyées vers les serveurs Bitwarden. Personne d'autre que vous n'y a accès.
+    </div>
+    <div class="callout warn">
+      <strong>Attention aux doublons</strong>
+      L'import ne vérifie pas si un élément existe déjà. Si vous importez deux fois le même fichier, ou des éléments déjà présents, ils seront créés en double.
+    </div>
+  </section>
+
+  <!-- 2. METHODES -->
+  <section id="methodes">
+    <h2><span class="num">2</span> Les méthodes d'import</h2>
+    <p class="lead">Choisissez l'onglet correspondant à l'endroit d'où vous souhaitez faire l'import. La méthode la plus simple pour la plupart des usagers est l'<strong>application web</strong>.</p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" data-tab="web">💻 Application web</button>
+      <button class="tab-btn" data-tab="ext">🧩 Extension navigateur</button>
+      <button class="tab-btn" data-tab="mobile">📱 Mobile</button>
+      <button class="tab-btn" data-tab="desktop">🖥️ Application bureau</button>
+      <button class="tab-btn" data-tab="cli">⌨️ Ligne de commande</button>
+    </div>
+
+    <!-- WEB -->
+    <div class="tab-panel active" data-panel="web">
+      <h3>Depuis l'application web (recommandé)</h3>
+      <p>Connectez-vous à votre coffre sur <a href="https://vault.bitwarden.com" target="_blank" rel="noopener">vault.bitwarden.com</a>, puis :</p>
+      <ol>
+        <li>Cliquez sur <strong>Outils</strong> (Tools).</li>
+        <li>Cliquez sur <strong>Importer des données</strong> (Import).</li>
+        <li>Dans le menu <strong>Coffre</strong>, choisissez la destination :
+          <ul>
+            <li><strong>Mon coffre</strong> pour vos données personnelles. Vous pouvez éventuellement choisir un <strong>dossier</strong> pour ranger les éléments.</li>
+            <li>Le nom d'une <strong>organisation</strong> si vous importez dans un coffre partagé (nécessite la permission adéquate).</li>
+          </ul>
+        </li>
+        <li>Dans le menu <strong>Format de fichier</strong>, sélectionnez le format de votre fichier exporté (voir la <a href="#formats">liste des formats</a>).</li>
+        <li>Fournissez vos données de l'une de ces deux façons :
+          <ul>
+            <li>Cliquez sur <strong>Choisir un fichier</strong> et sélectionnez le fichier exporté ;</li>
+            <li>ou copiez-collez le contenu du fichier dans la zone de texte.</li>
+          </ul>
+        </li>
+        <li>Cliquez sur <strong>Importer</strong>. S'il s'agit d'un fichier <code>.json</code> protégé par mot de passe, saisissez ce mot de passe dans la fenêtre qui apparaît.</li>
+        <li>Une fois l'import terminé, <strong>supprimez le fichier exporté</strong> de votre ordinateur.</li>
+      </ol>
+    </div>
+
+    <!-- EXTENSION -->
+    <div class="tab-panel" data-panel="ext">
+      <h3>Depuis l'extension navigateur</h3>
+      <ol>
+        <li>Ouvrez l'extension et allez dans <strong>Paramètres</strong> (Settings).</li>
+        <li>Cliquez sur <strong>Options du coffre</strong> (Vault options).</li>
+        <li>Cliquez sur <strong>Importer des éléments</strong> (Import items). Une nouvelle fenêtre s'ouvre.</li>
+        <li>Dans le menu <strong>Coffre</strong>, choisissez la destination (Mon coffre, éventuellement un dossier, ou une organisation).</li>
+        <li>Dans le menu <strong>Format de fichier</strong>, sélectionnez le format de votre fichier.</li>
+        <li>Cliquez sur <strong>Choisir un fichier</strong> et sélectionnez-le, ou copiez-collez son contenu dans la zone de texte.</li>
+        <li>Cliquez sur <strong>Importer les données</strong>. Pour un <code>.json</code> protégé, saisissez le mot de passe demandé.</li>
+        <li>Une fois terminé, <strong>supprimez le fichier exporté</strong>.</li>
+      </ol>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="tab-panel" data-panel="mobile">
+      <h3>Depuis un mobile</h3>
+      <p>Il existe deux façons d'importer sur mobile.</p>
+
+      <h3>Méthode la plus courante</h3>
+      <p>Sur la plupart des appareils, le plus simple est d'ouvrir un <strong>navigateur mobile</strong>, de vous connecter à Bitwarden et de suivre les étapes de l'<a href="#methodes" onclick="showTab('web')">application web</a> ci-dessus.</p>
+
+      <h3>Import direct via le protocole CXP</h3>
+      <p>Bitwarden prend en charge le protocole <strong>Credential Exchange (CXP)</strong>, qui permet un transfert direct sans passer par un fichier — à condition que l'autre application le supporte aussi.</p>
+
+      <p><strong>Sur iOS 26 ou plus récent :</strong></p>
+      <ol>
+        <li>Ouvrez l'autre application (celle où sont vos mots de passe) compatible CXP.</li>
+        <li>Trouvez l'option d'export et choisissez les éléments à transférer. Exemple avec l'app <strong>Apple Mots de passe</strong> : icône Options → <em>Exporter les données vers une autre app</em> → cochez les éléments → <strong>Continuer</strong>.</li>
+        <li>Sur l'écran <strong>Exporter les mots de passe</strong>, touchez <strong>Continuer</strong>.</li>
+        <li>Choisissez <strong>Bitwarden</strong> comme destination, puis <strong>Continuer</strong>.</li>
+        <li>Touchez <strong>Continuer dans « Bitwarden »</strong>.</li>
+        <li>L'app Bitwarden s'ouvre : touchez <strong>Continuer</strong> pour confirmer l'import.</li>
+      </ol>
+
+      <p><strong>Sur Android 10 ou plus récent :</strong></p>
+      <ol>
+        <li>Ouvrez l'application <strong>Bitwarden</strong>.</li>
+        <li>Touchez <strong>Paramètres</strong> → <strong>Coffre</strong> → <strong>Importer des éléments</strong>.</li>
+        <li>Touchez <strong>Importer depuis une autre app</strong>.</li>
+        <li>Sélectionnez l'autre application compatible CXP, puis <strong>Continuer</strong>.</li>
+        <li>Choisissez les éléments à importer (une connexion peut être demandée).</li>
+        <li>Un message confirme la fin de l'import.</li>
+      </ol>
+      <div class="callout note">
+        <strong>Remarque</strong>
+        Pour l'instant, l'import des données Dashlane via CXP n'est pas pris en charge sur Android.
+      </div>
+    </div>
+
+    <!-- DESKTOP -->
+    <div class="tab-panel" data-panel="desktop">
+      <h3>Depuis l'application bureau</h3>
+      <ol>
+        <li>Sélectionnez <strong>Importer</strong> dans le menu de navigation.</li>
+        <li>Dans le menu <strong>Coffre</strong>, choisissez la destination (Mon coffre, éventuellement un dossier, ou une organisation).</li>
+        <li>Dans le menu <strong>Format de fichier</strong>, sélectionnez le format de votre fichier.</li>
+        <li>Cliquez sur <strong>Choisir un fichier</strong> et sélectionnez-le, ou copiez-collez son contenu dans la zone de texte.</li>
+        <li>Cliquez sur <strong>Importer les données</strong>. Pour un <code>.json</code> protégé, saisissez le mot de passe demandé.</li>
+        <li>Une fois terminé, <strong>supprimez le fichier exporté</strong> de votre appareil.</li>
+      </ol>
+    </div>
+
+    <!-- CLI -->
+    <div class="tab-panel" data-panel="cli">
+      <h3>Depuis la ligne de commande (CLI)</h3>
+      <p>Pour les utilisateurs avancés, la commande est :</p>
+      <pre><code>bw import &lt;format&gt; &lt;chemin_du_fichier&gt;</code></pre>
+      <p>La commande a besoin d'un <strong>format</strong> et d'un <strong>chemin</strong>. Pour obtenir la liste des formats disponibles :</p>
+      <pre><code>bw import --formats</code></pre>
+      <p>Exemple concret :</p>
+      <pre><code>bw import lastpasscsv /Users/moncompte/Documents/mesdonnees.csv</code></pre>
+      <p>Une fois l'import terminé, <strong>supprimez le fichier exporté</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 3. FORMATS -->
+  <section id="formats">
+    <h2><span class="num">3</span> Formats de fichiers acceptés</h2>
+    <p class="lead">Bitwarden accepte directement les formats ci-dessous. Utilisez la barre de recherche pour trouver rapidement votre ancien outil.</p>
+    <div class="callout tip">
+      <strong>Votre outil n'est pas listé ?</strong>
+      Tant qu'il permet d'exporter vos données, vous pouvez adapter le fichier au format Bitwarden (<code>.csv</code> ou <code>.json</code>) puis l'importer.
+    </div>
+    <div class="search-box">
+      <input type="text" id="fmtSearch" placeholder="Rechercher un outil (ex : Chrome, LastPass, KeePass…)" aria-label="Rechercher un format">
+    </div>
+    <div class="formats-grid" id="formatsGrid"></div>
+    <p class="no-result" id="noResult" style="display:none;">Aucun outil ne correspond à votre recherche.</p>
+  </section>
+
+  <!-- 4. ERREURS -->
+  <section id="erreurs">
+    <h2><span class="num">4</span> En cas d'erreur d'import</h2>
+    <p class="lead">Si une limite est dépassée ou si le fichier contient un problème, un message « Erreur d'import » apparaît. Dans ce cas, <strong>aucune donnée n'est ajoutée</strong> à votre coffre.</p>
+
+    <h3>Limites de taille d'un fichier</h3>
+    <p>Un fichier importé peut contenir au maximum :</p>
+    <ul>
+      <li>40 000 éléments</li>
+      <li>2 000 dossiers</li>
+      <li>2 000 collections</li>
+      <li>7 000 relations élément-dossier</li>
+      <li>80 000 relations élément-collection</li>
+    </ul>
+    <p>Si votre fichier est trop volumineux, découpez-le en plusieurs fichiers plus petits et importez-les séparément.</p>
+
+    <h3>Champ trop long</h3>
+    <p>Si un champ d'un élément (souvent dans un <code>.csv</code>) dépasse la limite de caractères, l'élément n'est pas importé. Le message d'erreur précise l'élément et le champ concernés.</p>
+    <div class="callout note">
+      <strong>Pourquoi ?</strong>
+      Le chiffrement de Bitwarden augmente la taille du texte de 30 à 50 %. Un champ « Notes » de 8 000 caractères peut ainsi dépasser la limite de 10 000 caractères une fois chiffré. Réduisez alors le texte concerné, enregistrez le fichier et réimportez-le.
+    </div>
+
+    <h3>Éléments non assignés (organisations)</h3>
+    <p>Dans une organisation, les membres (hors administrateurs et propriétaires) doivent assigner chaque identifiant importé à au moins une <strong>collection</strong>. Assignez une collection existante sur laquelle vous avez les droits, ou créez-en une nouvelle directement dans le fichier d'import.</p>
+  </section>
+
+  <!-- 5. APRES -->
+  <section id="apres">
+    <h2><span class="num">5</span> Après l'import — le réflexe sécurité</h2>
+    <ol>
+      <li><strong>Vérifiez</strong> que vos identifiants sont bien présents dans votre coffre Bitwarden.</li>
+      <li><strong>Supprimez le fichier exporté</strong> de votre ordinateur ou de votre appareil. Ce fichier contient vos mots de passe en clair : le conserver serait un risque en cas de compromission de votre poste.</li>
+      <li><strong>Videz les mots de passe de l'ancien outil</strong> (navigateur ou ancien gestionnaire) une fois que vous avez confirmé que tout est bien dans Bitwarden.</li>
+    </ol>
+    <div class="callout warn">
+      <strong>Ne gardez jamais un fichier d'export de mots de passe</strong>
+      C'est un fichier lisible par n'importe qui. Videz aussi la corbeille après suppression.
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Guide interne rédigé à partir de la documentation officielle Bitwarden.<br>
+  Source : <a href="https://bitwarden.com/help/import-data/" target="_blank" rel="noopener">bitwarden.com/help/import-data</a> &amp; <a href="https://bitwarden.com/help/import-faqs/" target="_blank" rel="noopener">import-faqs</a>.</p>
+  <p class="updated">Document d'aide — n'hésitez pas à contacter le support informatique en cas de difficulté.</p>
+</footer>
+
+<script>
+  // --- Onglets ---
+  function showTab(name){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));
+  }
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>showTab(btn.dataset.tab));
+  });
+
+  // --- Liste des formats ---
+  const formats = [
+    ["1Password","1pif"],["1Password 6 & 7 (Windows)","csv"],["1Password 6 & 7 (Mac)","csv"],["1Password","1pux"],
+    ["Ascendo DataVault","csv"],["Avast Passwords","csv"],["Avast Passwords","json"],["Avira","json"],
+    ["BlackBerry Password Keeper","csv"],["Blur","csv"],["Brave (choisir Chrome)","csv"],["Buttercup","csv"],
+    ["Chrome","csv"],["Clipperz","html"],["Codebook","csv"],["Dashlane","json"],["Dashlane","csv"],
+    ["Delinea","csv / xml"],["Edge","csv"],["Encryptr","csv"],["Enpass","csv"],["Enpass","json"],
+    ["Firefox","csv"],["F-Secure KEY","fsk"],["GNOME Passwords / Seahorse","json"],["Kaspersky Password Manager","txt"],
+    ["KeePass","kdbx"],["KeePass 2","xml"],["KeePassX","csv"],["Keeper","csv"],["Keeper","json"],
+    ["LastPass","csv"],["LogMeOnce","csv"],["Meldium","csv"],["mSecure","csv"],["Myki","csv"],
+    ["Microsoft Edge (choisir Chrome)","csv"],["Netwrix Password Secure","csv"],["NordPass","csv"],
+    ["Opera (choisir Chrome)","csv"],["Padlock","csv"],["Passbolt","csv"],["PassKeep","csv"],["Passky","json"],
+    ["Passman","json"],["Passpack","csv"],["Password Agent","csv"],["Password Boss","json"],["Password Dragon","xml"],
+    ["Password Depot 17","xml"],["Password Safe","xml"],["PasswordWallet","txt"],["PasswordXP","csv"],
+    ["ProtonPass","json"],["Psono","json"],["RememBear","csv"],["RoboForm","csv"],["Safari et macOS","csv"],
+    ["SafeInCloud","xml"],["SaferPass","csv"],["SecureSafe","csv"],["SplashID","csv"],["Sticky Password","xml"],
+    ["True Key","csv"],["Universal Password Manager","csv"],["Vivaldi","csv"],["Yoti","csv"],["Zoho Vault","csv"]
+  ];
+  const grid=document.getElementById('formatsGrid');
+  const noResult=document.getElementById('noResult');
+  function render(list){
+    grid.innerHTML='';
+    if(list.length===0){noResult.style.display='block';return;}
+    noResult.style.display='none';
+    list.forEach(([name,ext])=>{
+      const d=document.createElement('div');
+      d.className='fmt';
+      d.innerHTML=`<span>${name}</span><span class="ext">${ext}</span>`;
+      grid.appendChild(d);
+    });
+  }
+  render(formats);
+  document.getElementById('fmtSearch').addEventListener('input',e=>{
+    const q=e.target.value.trim().toLowerCase();
+    render(formats.filter(([name,ext])=>(name+' '+ext).toLowerCase().includes(q)));
+  });
+</script>
+</body>
+</html>
